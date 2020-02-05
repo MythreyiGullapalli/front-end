@@ -4,9 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
 import { AuthenticationService, AlertService } from '../_services'
+import { BehaviorSubject } from 'rxjs';
 
 @Component({templateUrl: 'login.component.html'})
 export class LoginComponent implements OnInit {
+    private messageSource = new BehaviorSubject('login');
+    currentMessage = this.messageSource.asObservable();
     loginForm: FormGroup;
     loading = false;
     submitted = false;
