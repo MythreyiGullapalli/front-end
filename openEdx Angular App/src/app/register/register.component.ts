@@ -1,11 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-import { AlertService, UserService, AuthenticationService } from '@/_services';
+import { UserService, AuthenticationService, AlertService } from '../_services';
 
-@Component({templateUrl: 'register.component.html'})
+@Component({ templateUrl: 'register.component.html' })
 export class RegisterComponent implements OnInit {
     registerForm: FormGroup;
     loading = false;
@@ -17,25 +17,20 @@ export class RegisterComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private userService: UserService,
         private alertService: AlertService
-    ) { 
+    ) {
         // redirect to home if already logged in
-        if (this.authenticationService.currentUserValue) { 
+        if (this.authenticationService.currentUserValue) {
             this.router.navigate(['/']);
         }
     }
 
     ngOnInit() {
         this.registerForm = this.formBuilder.group({
-            email: ['', Validators.required],
+            firstName: ['', Validators.required],
+            lastName: ['', Validators.required],
             username: ['', Validators.required],
-            level_of_education: [''],
-            year_of_birth:[''],
-            gender:[''],
-            mailing_address:[''],
-            password: ['', [Validators.required, Validators.minLength(6)]],
-   
+            password: ['', [Validators.required, Validators.minLength(6)]]
         });
-
     }
 
     // convenience getter for easy access to form fields
@@ -43,6 +38,9 @@ export class RegisterComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
+
+        // reset alerts on submit
+        this.alertService.clear();
 
         // stop here if form is invalid
         if (this.registerForm.invalid) {
@@ -55,7 +53,7 @@ export class RegisterComponent implements OnInit {
             .subscribe(
                 data => {
                     this.alertService.success('Registration successful', true);
-                    this.router.navigate(['/login']);
+                    this.router.navigate(['/login'], { queryParams: { registered: true }});
                 },
                 error => {
                     this.alertService.error(error);
